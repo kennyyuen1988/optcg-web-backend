@@ -8,24 +8,31 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:3721", "https://optcg-web.vercel.app"],
+    origin: process.env.WHITE_LIST_ORIGIN,
   })
 );
 
-const port = 3000;
+console.log("process.env.DATABASE_URL_1", process.env.DATABASE_URL);
+console.log("process.env.WHITE_LIST_ORIGIN_1", process.env.WHITE_LIST_ORIGIN);
 
-const pool = new Pool({
+const port = 3000;
+let poolConfig = {
   connectionString: process.env.DATABASE_URL,
-  ssl: {
+};
+
+if (process.env.DEPLOY_ENV === "production") {
+  poolConfig.ssl = {
     rejectUnauthorized: false,
-  },
-});
+  };
+}
+
+const pool = new Pool(poolConfig);
 
 app.get("/api/data", async (req, res) => {
   try {
     const client = await pool.connect();
     const result = await client.query(
-      "SELECT id, imageurl FROM cards WHERE id <= 50"
+      "SELECT * FROM cards_with_price ORDER BY price DESC LIMIT 20"
     );
 
     const results = { results: result ? result.rows : null };

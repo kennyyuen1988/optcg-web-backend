@@ -15,6 +15,10 @@ if (process.env.DEPLOY_ENV === "production") {
 
 const client = new Pool(poolConfig);
 
+client.on("error", (err, client) => {
+  console.error("Unexpected error on idle client", err);
+});
+
 const insertDataToDb = async () => {
   try {
     const CardInfoList = JSON.parse(
@@ -64,6 +68,7 @@ const insertDataToDb = async () => {
     process.exit(0);
   } catch (err) {
     console.log("Error:", err);
+  } finally {
     await client.end();
     console.log("client end");
     // Force Node.js process to exit

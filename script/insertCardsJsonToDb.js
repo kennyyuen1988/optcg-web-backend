@@ -32,6 +32,8 @@ const insertDataToDb = async () => {
     console.log("Sequence reset successfully");
 
     // Generate and execute INSERT INTO statements
+    const totalCardNumbers = CardInfoList.length;
+    let insertedCardNumbers = 0;
     const promises = CardInfoList.map((card) => {
       return new Promise((resolve, reject) => {
         pool.query(
@@ -42,6 +44,7 @@ const insertDataToDb = async () => {
               reject(err);
             } else {
               resolve(res);
+              insertedCardNumbers += 1;
             }
           }
         );
@@ -49,7 +52,9 @@ const insertDataToDb = async () => {
     });
 
     await Promise.all(promises);
-    console.log("json import successfully");
+    console.log(
+      `json import successfully, inserted cards: ${insertedCardNumbers}/${totalCardNumbers}`
+    );
   } catch (err) {
     console.log("Error:", err);
   } finally {

@@ -17,5 +17,7 @@ jobs:
         run: yarn install
       - name: Create .env file
         run: echo "${{ secrets.ENV_FILE }}" > .env
-      - name: Run script
-        run: node script/getOpTcgLatestPrice.js
+      - name: Run updateCardsJson.js script
+        run: node script/updateCardsJson.js
+      - name: Run insertCardsJsonToDb.js script
+        run: node script/insertCardsJsonToDb.js

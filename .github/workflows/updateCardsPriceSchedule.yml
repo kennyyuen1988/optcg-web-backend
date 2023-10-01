@@ -21,3 +21,5 @@ jobs:
         run: node script/updateCardsJson.js
       - name: Run insertCardsJsonToDb.js script
         run: node script/insertCardsJsonToDb.js
+      - name: End database connection
+        run: node script/endDatabaseConnection.js

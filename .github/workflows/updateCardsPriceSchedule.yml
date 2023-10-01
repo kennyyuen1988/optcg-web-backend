@@ -1,0 +1,13 @@
+name: Update Cards Price Scheduled Job
+on:
+  push:
+  schedule:
+    - cron: "0 */6 * * *"
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Run script
+        run: node script/getOpTcgLatestPrice.js

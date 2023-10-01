@@ -5,6 +5,7 @@ require("dotenv").config();
 
 let poolConfig = {
   connectionString: process.env.DATABASE_URL,
+  max: 20, // 最大并发连接数
 };
 
 if (process.env.DEPLOY_ENV === "production") {
@@ -34,22 +35,25 @@ const insertDataToDb = async () => {
     // Generate and execute INSERT INTO statements
     const totalCardNumbers = CardInfoList.length;
     let insertedCardNumbers = 0;
-    const promises = CardInfoList.map((card) => {
-      return new Promise((resolve, reject) => {
-        pool.query(
-          "INSERT INTO cards_with_price (card_id, name, price) VALUES ($1, $2, $3)",
-          [card.card_id, card.name, card.price],
-          (err, res) => {
-            if (err) {
-              reject(err);
-            } else {
-              resolve(res);
-              insertedCardNumbers += 1;
+    const promises = CardInfoList.map(
+      (card) => {
+        return new Promise((resolve, reject) => {
+          pool.query(
+            "INSERT INTO cards_with_price (card_id, name, price) VALUES ($1, $2, $3)",
+            [card.card_id, card.name, card.price],
+            (err, res) => {
+              if (err) {
+                reject(err);
+              } else {
+                resolve(res);
+                insertedCardNumbers += 1;
+              }
             }
-          }
-        );
-      });
-    });
+          );
+        });
+      },
+      { concurrency: 20 }
+    );
 
     await Promise.all(promises);
     console.log(

@@ -19,5 +19,5 @@ jobs:
         run: echo "${{ secrets.ENV_FILE }}" > .env
       - name: Run updateCardsJson.js script
         run: node script/updateCardsJson.js
-      - name: Run insertCardsJsonToDb.js script
-        run: node script/insertCardsJsonToDb.js
+      # - name: Run insertCardsJsonToDb.js script
+      #   run: node script/insertCardsJsonToDb.js

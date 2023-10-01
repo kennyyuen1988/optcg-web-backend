@@ -6,9 +6,16 @@ require("dotenv").config();
 
 const app = express();
 
+const whitelist = process.env.WHITE_LIST_ORIGIN.split(",");
 app.use(
   cors({
-    origin: process.env.WHITE_LIST_ORIGIN,
+    origin: function (origin, callback) {
+      if (whitelist.indexOf(origin) !== -1 || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
   })
 );
 
